@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>她的西安研学之旅 · 可视化游记</title>
+<style>
+  :root{
+    --sand:#f7efe3;
+    --sand-deep:#eadbc6;
+    --clay:#b45f3c;
+    --clay-deep:#7a3f2a;
+    --ink:#2f2a24;
+    --muted:#766b5e;
+    --jade:#5f8a7a;
+    --gold:#d9a441;
+    --card:#fffaf2;
+    --line:#e2d3bf;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:"Noto Serif SC","Songti SC","STSong",serif;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(217,164,65,.14), transparent 30%),
+      radial-gradient(circle at 90% 10%, rgba(95,138,122,.12), transparent 28%),
+      var(--sand);
+    color:var(--ink);
+    line-height:1.75;
+  }
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding:86px 24px 64px;
+    color:#fff8ef;
+    background:
+      linear-gradient(135deg, #2f2a24 0%, #5b3326 45%, #b45f3c 100%);
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(90deg, transparent 0 48%, rgba(255,255,255,.06) 49% 51%, transparent 52%),
+      repeating-linear-gradient(0deg, transparent 0 38px, rgba(255,255,255,.04) 39px 40px);
+    pointer-events:none;
+  }
+  .hero::after{
+    content:"🏯";
+    position:absolute;
+    right:4%;
+    bottom:-38px;
+    font-size:210px;
+    opacity:.11;
+    transform:rotate(-4deg);
+    pointer-events:none;
+  }
+  .hero-inner{
+    position:relative;
+    z-index:1;
+    max-width:1180px;
+    margin:0 auto;
+  }
+  .eyebrow{
+    margin:0 0 14px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-size:.78rem;
+    color:#f1c98d;
+  }
+  h1{
+    margin:0;
+    font-size:clamp(2.2rem, 6vw, 5rem);
+    line-height:1.1;
+    font-weight:800;
+    letter-spacing:.02em;
+  }
+  .sub{
+    margin:18px 0 0;
+    max-width:760px;
+    font-size:clamp(1rem, 2.2vw, 1.25rem);
+    color:#f7e8d4;
+  }
+  .hero-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:28px;
+  }
+  .hero-tags span{
+    display:inline-block;
+    padding:6px 13px;
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:999px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(6px);
+    font-size:.88rem;
+  }
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 20px 70px;
+  }
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:14px;
+    margin:-32px 0 32px;
+    position:relative;
+    z-index:2;
+  }
+  .stat{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px 16px;
+    box-shadow:0 14px 34px rgba(76,50,32,.08);
+  }
+  .stat strong{
+    display:block;
+    font-size:1.8rem;
+    color:var(--clay);
+    line-height:1.2;
+  }
+  .stat span{
+    color:var(--muted);
+    font-size:.9rem;
+  }
+  .section-title{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:16px;
+    margin:46px 0 18px;
+    border-bottom:2px solid var(--line);
+    padding-bottom:12px;
+  }
+  .section-title h2{
+    margin:0;
+    font-size:clamp(1.4rem, 3vw, 2rem);
+  }
+  .section-title p{
+    margin:0;
+    color:var(--muted);
+    font-size:.92rem;
+  }
+  .tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:24px 0 14px;
+  }
+  .tab{
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    border-radius:999px;
+    padding:9px 15px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:.92rem;
+    transition:.2s ease;
+  }
+  .tab:hover{
+    border-color:var(--clay);
+    transform:translateY(-1px);
+  }
+  .tab.active{
+    background:var(--clay);
+    color:#fff8ef;
+    border-color:var(--clay);
+    box-shadow:0 8px 20px rgba(180,95,60,.22);
+  }
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin:16px 0 22px;
+  }
+  .search{
+    flex:1 1 280px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 14px;
+  }
+  .search input{
+    width:100%;
+    border:0;
+    outline:0;
+    background:transparent;
+    font:inherit;
+    color:var(--ink);
+  }
+  .count{
+    color:var(--muted);
+    font-size:.9rem;
+    white-space:nowrap;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(285px, 1fr));
+    gap:18px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 12px 28px rgba(76,50,32,.06);
+    transition:.24s ease;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 18px 38px rgba(76,50,32,.12);
+    border-color:#d8b999;
+  }
+  .card-head{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .emoji{
+    width:44px;
+    height:44px;
+    flex:0 0 44px;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:linear-gradient(135deg, #f3e2ca, #ead2b4);
+    font-size:1.45rem;
+  }
+  .badge{
+    display:inline-block;
+    font-size:.72rem;
+    letter-spacing:.08em;
+    color:var(--clay);
+    background:#f7e7d8;
+    border-radius:999px;
+    padding:3px 9px;
+    margin-bottom:4px;
+  }
+  .card h3{
+    margin:0;
+    font-size:1.08rem;
+    line-height:1.35;
+  }
+  .card p{
+    margin:0;
+    color:#4d453d;
+    font-size:.94rem;
+  }
+  blockquote{
+    margin:0;
+    padding:10px 12px;
+    border-left:3px solid var(--gold);
+    background:#fbf3e6;
+    border-radius:0 10px 10px 0;
+    color:#6b5847;
+    font-size:.9rem;
+  }
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:auto;
+  }
+  .chips span{
+    font-size:.76rem;
+    color:#6f655b;
+    background:#f2e8da;
+    border-radius:999px;
+    padding:4px 8px;
+  }
+  .stars{
+    color:var(--gold);
+    font-size:.92rem;
+    letter-spacing:.06em;
+  }
+  .stars span{
+    color:var(--muted);
+    font-size:.78rem;
+    margin-left:6px;
+  }
+  .food-panel{
+    margin-top:26px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:22px;
+    box-shadow:0 12px 30px rgba(76,50,32,.06);
+  }
+  .food-panel h3{
+    margin:0 0 18px;
+    font-size:1.25rem;
+  }
+  .bar-row{
+    display:grid;
+    grid-template-columns:minmax(130px, 190px) 1fr 46px;
+    gap:12px;
+    align-items:center;
+    margin:10px 0;
+  }
+  .bar-label{
+    font-size:.88rem;
+    color:#51483f;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .bar-track{
+    height:11px;
+    background:#efe2d1;
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--jade), var(--gold), var(--clay));
+  }
+  .bar-val{
+    color:var(--muted);
+    font-size:.8rem;
+    text-align:right;
+  }
+  .timeline{
+    display:grid;
+    gap:14px;
+    margin-top:10px;
+  }
+  .tl-item{
+    display:grid;
+    grid-template-columns:44px 1fr;
+    gap:14px;
+    align-items:start;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:16px;
+  }
+  .tl-item > span{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:var(--clay);
+    color:#fff8ef;
+    font-weight:700;
+  }
+  .tl-item h4{
+    margin:0 0 4px;
+    font-size:1rem;
+  }
+  .tl-item p{
+    margin:0;
+    color:#5f564d;
+    font-size:.9rem;
+  }
+  .quote{
+    margin:50px 0 0;
+    padding:34px 26px;
+    border-radius:24px;
+    background:linear-gradient(135deg, #2f2a24, #5b3326);
+    color:#fff4e6;
+    text-align:center;
+    box-shadow:0 18px 44px rgba(47,42,36,.18);
+  }
+  .quote p{
+    margin:0 auto;
+    max-width:820px;
+    font-size:clamp(1.05rem, 2.6vw, 1.45rem);
+    line-height:1.8;
+  }
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:.84rem;
+    padding:28px 20px 50px;
+  }
+  @media (max-width:640px){
+    .hero{padding:64px 18px 48px;}
+    .hero::after{font-size:140px; right:-20px;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .bar-row{grid-template-columns:1fr; gap:4px;}
+    .bar-val{text-align:left;}
+    .card{padding:16px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">2024级国学班 · 西安考察报告</p>
+    <h1>她的西安研学之旅</h1>
+    <p class="sub">从岭南到关中，把书走成路。博物馆、寺庙、城墙、泡馍、油泼辣子，还有飞机窗外真正的秦岭。</p>
+    <div class="hero-tags">
+      <span>🗿 兵马俑</span>
+      <span>🪨 碑林</span>
+      <span>🕌 清真大寺</span>
+      <span>🏯 城墙钟楼</span>
+      <span>🍲 泡馍</span>
+      <span>🌶 油泼辣子</span>
+      <span>✈️ 飞越秦岭</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="stats">
+    <div class="stat"><strong>5</strong><span>博物馆 / 遗址</span></div>
+    <div class="stat"><strong>9</strong><span>寺庙与宗教遗存</span></div>
+    <div class="stat"><strong>3+</strong><span>宫苑 / 城垣 / 街区</span></div>
+    <div class="stat"><strong>15+</strong><span>美食记录</span></div>
+    <div class="stat"><strong>∞</strong><span>报告里的追问</span></div>
+  </section>
+
+  <div class="section-title">
+    <h2>🎒 她去了哪些好玩的</h2>
+    <p>按“博物馆 / 寺庙 / 宫苑 / 好玩瞬间 / 美食”筛选</p>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-filter="all">全部</button>
+    <button class="tab" data-filter="museum">🏛 博物馆与遗址</button>
+    <button class="tab" data-filter="temple">🛕 寺庙与宗教</button>
+    <button class="tab" data-filter="palace">🏯 宫苑与城垣</button>
+    <button class="tab" data-filter="fun">✨ 好玩瞬间</button>
+    <button class="tab" data-filter="food">🍜 美食</button>
+  </nav>
+
+  <div class="toolbar">
+    <label class="search">
+      <span>🔍</span>
+      <input id="searchInput" type="search" placeholder="搜索：兵马俑、碑林、泡馍、油泼辣子、清真寺……">
+    </label>
+    <div class="count">当前显示 <strong id="count">0</strong> 项</div>
+  </div>
+
+  <section class="grid" id="cardGrid"></section>
+
+  <div class="section-title">
+    <h2>📊 美食热度榜</h2>
+    <p>根据她报告里的评价整理，不是精确评分，是“报告里的快乐程度”</p>
+  </div>
+  <div class="food-panel">
+    <h3>她吃得最服气的是什么？</h3>
+    <div id="foodChart"></div>
+  </div>
+
+  <div class="section-title">
+    <h2>🧭 行程气质线</h2>
+    <p>从落地干燥的热，到回程飞越秦岭</p>
+  </div>
+  <div class="timeline">
+    <div class="tl-item"><span>①</span><div><h4>从岭南到关中</h4><p>广州下雨起飞，穿过云层后看到土黄与赭红。落地西安，干燥的热像一只不太客气的手。</p></div></div>
+    <div class="tl-item"><span>②</span><div><h4>钟楼与第一顿陕西菜</h4><p>夜里看见钟楼门洞亮灯，车流绕行。吃了凉皮、肉夹馍、粉蒸肉夹馍、葫芦鸡。</p></div></div>
+    <div class="tl-item"><span>③</span><div><h4>博物馆里的时间</h4><p>秦始皇帝陵博物院与丽山园、陕西历史博物馆、西安碑林博物馆、陕西考古博物馆。脚很累，但文物开始有重量。</p></div></div>
+    <div class="tl-item"><span>④</span><div><h4>寺庙与宗教文化遗存</h4><p>大慈恩寺、大兴善寺、广仁寺、云居寺、化觉巷清真大寺、大皮院清真寺、湘子庙、都城隍庙、五星街南堂。</p></div></div>
+    <div class="tl-item"><span>⑤</span><div><h4>华清宫、城墙、钟鼓楼、大唐不夜城</h4><p>温泉、五间厅弹孔、城砖刻名、晨钟暮鼓、灯光里的唐朝想象，还穿了小唐装。</p></div></div>
+    <div class="tl-item"><span>⑥</span><div><h4>回程飞越秦岭</h4><p>一道山脊过去，又是一道。她终于明白，“岭”不是地图上的一条线，而是一大片连绵的山脉。</p></div></div>
+  </div>
+
+  <div class="quote">
+    <p>“从岭南到关中，飞机只用了几个小时；从课本里的秦岭到窗外真正的秦岭，我却走了很久。”</p>
+  </div>
+</main>
+
+<footer>
+  根据《西安考察报告》整理 · 可视化网页 · 仅作旅行回忆与分享
+</footer>
+
+<script>
+const catName = {
+  museum: "博物馆与遗址",
+  temple: "寺庙与宗教",
+  palace: "宫苑与城垣",
+  fun: "好玩瞬间",
+  food: "美食"
+};
+
+const items = [
+  // ---------- 博物馆与遗址 ----------
+  {
+    category:"museum", emoji:"🗿", title:"秦始皇帝陵博物院 & 丽山园",
+    desc:"看兵马俑一号坑、跪射俑、铜车马、文官俑和四号坑。人比俑多，但陶俑原本有彩绘、出土后颜色会迅速脱落这件事，让她记了很久。",
+    highlight:"“历史留给后人的，有时不是一件完好的东西，而是一件东西曾经完好过的证据。”",
+    tags:["兵马俑","跪射俑","铜车马","文官俑","物勒工名","汉紫"]
+  },
+  {
+    category:"museum", emoji:"⛰️", title:"秦始皇陵封土堆与丽山园",
+    desc:"兵马俑只是陵园的一部分，真正的主陵墓室至今没有正式发掘。封土堆是一层土一层土夯筑出来的，铜车马用青铜做出了缰绳的柔软感。",
+    highlight:"“一个人想把自己安放在永恒里，最后依靠的仍然是无数普通人的肩膀。”",
+    tags:["封土堆","铜车马","未发掘","夯筑"]
+  },
+  {
+    category:"museum", emoji:"🏺", title:"陕西历史博物馆",
+    desc:"国宝密度太高，走到腿酸。西周牯钟、虎符、何家村窖藏、镶金兽首玛瑙杯、葡萄花鸟纹银香囊、鎏金舞马衔杯纹银壶、唐三彩、金饼、瓦当都让她停留。",
+    highlight:"“博物馆不是超市，文物也不是摆在货架上等人逐件打卡的商品。”",
+    tags:["虎符","何家村窖藏","舞马衔杯银壶","香囊","唐三彩"]
+  },
+  {
+    category:"museum", emoji:"🪨", title:"西安碑林博物馆",
+    desc:"像一间巨大的旧字帖库。她照着“十九组国宝”清单找得狼狈，却看了大夏石马、景云钟、石台孝经、开成石经、颜真卿、柳公权、曹全碑、昭陵六骏、李静训石棺、大秦景教碑。",
+    highlight:"“纸上的字是从石头上拓下来的影子，笔画凹进去的地方，才是文字曾经真正留下的痕迹。”",
+    tags:["昭陵六骏","李静训石棺","开成石经","大秦景教碑","曹全碑"]
+  },
+  {
+    category:"museum", emoji:"📜", title:"陕西考古博物馆 · 上官婉儿墓志",
+    desc:"此行最想看的是上官婉儿墓志。志盖上刻着“大唐故昭容上官氏铭”。史书和墓志像不同方向的窗，不能只信一个。",
+    highlight:"“她曾经也只是一个会生病、会失望、会与人亲近或疏远的人。”",
+    tags:["上官婉儿","墓志","大唐故昭容上官氏铭"]
+  },
+
+  // ---------- 寺庙与宗教 ----------
+  {
+    category:"temple", emoji:"🛕", title:"大慈恩寺 & 大雁塔",
+    desc:"大雁塔为安置玄奘从印度带回的经书、佛像与舍利而建。塔檐风铎一层层响。她还看了玄奘铜像和“雁塔题名”的故事。",
+    highlight:"“翻译是一种很容易被忽略的劳动。”",
+    tags:["玄奘","译经","大雁塔","雁塔题名","白居易"]
+  },
+  {
+    category:"temple", emoji:"🕊️", title:"大兴善寺",
+    desc:"闹市旁却像另一种声音。隋唐重要佛寺，唐代译经与密教传播场所，开元三大士善无畏、金刚智、不空曾在此弘法。",
+    highlight:"“有人仍然愿意来这里，做一些看似重复、其实对自己有意义的事情。”",
+    tags:["密教","开元三大士","译经"]
+  },
+  {
+    category:"temple", emoji:"🟡", title:"广仁寺",
+    desc:"城墙西北角内侧的藏传佛教寺院，红墙、金顶、经幡、藏香。她跟着前面的人推了转经筒，铜筒发出轻轻的沙沙声。",
+    highlight:"“信仰有公开的教义，也有私人而不愿被打扰的部分。”",
+    tags:["藏传佛教","转经筒","绿度母","康熙敕建"]
+  },
+  {
+    category:"temple", emoji:"🥬", title:"西五台云居寺",
+    desc:"比广仁寺安静得多，院落里种着菜，墙外有人晾衣服。它不像著名景点，却和居民日常生活并排存在。",
+    highlight:"“宗教建筑并不总在宏大历史的聚光灯下。”",
+    tags:["安静","居民区","日常"]
+  },
+  {
+    category:"temple", emoji:"🕌", title:"化觉巷清真大寺",
+    desc:"藏在回坊巷子深处，却采用中国传统建筑布局：木牌楼、石牌坊、省心楼、一真亭、礼拜大殿。匾额上有“为善最乐”“惟精惟一”“道冠古今”。",
+    highlight:"“不同的文化并没有因此完全混合成一种东西，它们仍然保有各自的边界。”",
+    tags:["清真寺","省心楼","一真亭","回坊","中西融合"]
+  },
+  {
+    category:"temple", emoji:"🕌", title:"大皮院清真寺",
+    desc:"更像当地人日常生活的一部分。信众刚结束礼拜，一位穆斯林大哥示意她们进去看看。她问：上班没时间来礼拜怎么办？对方说：“那就抽时间来做。”",
+    highlight:"“不是等所有事情做完以后才想起来，而是先为它留出位置。”",
+    tags:["五次礼拜","朝向麦加","日常生活"]
+  },
+  {
+    category:"temple", emoji:"🏮", title:"湘子庙",
+    desc:"南门附近的小庙，和韩湘子传说有关，院中有香泉古井，也有年轻人来求姻缘。她在这里想起韩愈被贬潮州。",
+    highlight:"“诗句没有变，读诗的人却换了位置。”",
+    tags:["韩湘子","韩愈","云横秦岭","香泉古井"]
+  },
+  {
+    category:"temple", emoji:"⚖️", title:"都城隍庙",
+    desc:"牌楼上有四个字：“你来了么。”庙里还有劝善对联：心术不正的人烧香也无益，心地端正的人不拜也无妨。",
+    highlight:"“仪式并不能替一个人承担他自己的生活。”",
+    tags:["你来了么","城隍","劝善"]
+  },
+  {
+    category:"temple", emoji:"⛪", title:"五星街天主教堂 / 南堂",
+    desc:"正面有西洋教堂元素，侧面却是青砖灰瓦、中式砖雕。她旁听了一场弥撒，满堂人同时跪下时，那一瞬间很安静。",
+    highlight:"“名词背后是具体的身体动作、空间安排与群体关系。”",
+    tags:["弥撒","圣体","平安礼","中西建筑"]
+  },
+
+  // ---------- 宫苑与城垣 ----------
+  {
+    category:"palace", emoji:"♨️", title:"华清宫",
+    desc:"骊山脚下，池水温热。她想到《长恨歌》的“温泉水滑洗凝脂”，也看了五间厅玻璃上的弹孔。",
+    highlight:"“历史上的重大事件并不是发生在一张试卷里。”",
+    tags:["长恨歌","温泉","五间厅","西安事变"]
+  },
+  {
+    category:"palace", emoji:"🧱", title:"西安城墙",
+    desc:"从长乐门登城，城墙也是一条路。她特意找砖面上的文字，有些刻着窑口、村名或责任人，想起兵马俑工匠的记号。",
+    highlight:"“一个城市的历史，如果只记得谁下令修建，却不记得是谁一块砖一块砖地把它砌起来……”",
+    tags:["长乐门","城砖刻字","物勒工名","修旧如旧"]
+  },
+  {
+    category:"palace", emoji:"🕰️", title:"钟楼 & 鼓楼",
+    desc:"夜里钟楼门洞亮灯，车流绕行。古时晨钟暮鼓报时，如今成了人们辨认方向、约见朋友和拍照的地标。",
+    highlight:"“古迹没有停在古代，而是换了一种方式继续存在。”",
+    tags:["晨钟暮鼓","夜景","地标"]
+  },
+
+  // ---------- 好玩瞬间 ----------
+  {
+    category:"fun", emoji:"🏮", title:"大唐不夜城 & 大雁塔北广场",
+    desc:"音乐喷泉、灯光、唐装、文创、表演。她穿了小唐装，假髻戴上去没多久脖子就开始酸。",
+    highlight:"“商业街里的‘唐朝’当然不是唐朝本身，但想象可能成为人走向历史的第一步。”",
+    tags:["大唐不夜城","音乐喷泉","唐装","灯光"]
+  },
+  {
+    category:"fun", emoji:"👘", title:"第一次穿小唐装",
+    desc:"改良唐式衣裳，裙子宽，腰带要系好几圈，头上假髻压得脖子酸。她终于知道，仪态万方也需要脖子有耐力。",
+    highlight:"“一套衣裳不仅是审美，也是一种身体上的负担。”",
+    tags:["唐装","义髻","体验"]
+  },
+  {
+    category:"fun", emoji:"🏘️", title:"回民街 / 回坊",
+    desc:"刚进去以为是小吃街，走深一点才发现也是有人世代居住的社区。窄巷、旧房子、阿拉伯文门楣、孩子、店铺、熟人打招呼。",
+    highlight:"“它不只是供人消费的地方，也是一片有人世代居住的社区。”",
+    tags:["回坊","社区","小吃街","清真寺"]
+  },
+  {
+    category:"fun", emoji:"🌃", title:"钟楼夜景",
+    desc:"四面的门洞亮着灯，车流从周围绕过去。钟楼像一件摆在马路中央的旧家具，却又是城市最不容忽视的地标之一。",
+    highlight:"“古建筑真的进入现代生活，它就不再只属于历史。”",
+    tags:["钟楼","夜景","车流"]
+  },
+  {
+    category:"fun", emoji:"✈️", title:"回程飞越秦岭",
+    desc:"飞机起飞不久，底下出现连绵的山。一道山脊过去，又是一道。她终于明白“岭”不是一座孤零零的山。",
+    highlight:"“从课本里的秦岭到窗外真正的秦岭，我却走了很久。”",
+    tags:["秦岭","地理分界线","归途","尺度"]
+  },
+
+  // ---------- 美食 ----------
+  {
+    category:"food", emoji:"🍲", title:"泡馍", rating:5,
+    desc:"她最喜欢的一顿。馍要自己掰，最好掰成大小均匀的小块，再交给店家加工。馍块太大不容易入味，掰得细，汤汁才能均匀进入。",
+    highlight:"“吃饭本身也是一门需要耐心的手艺。”",
+    tags:["自己掰馍","糖蒜","耐心","最喜欢"]
+  },
+  {
+    category:"food", emoji:"🌶️", title:"油泼辣子", rating:5,
+    desc:"面上撒好辣子，热油一浇，“滋”的一声，香气立刻起来。服务员浇油时还说吉祥话。陕西八大怪里有“油泼辣子一道菜”。",
+    highlight:"“在这里，辣子可以成为一碗面的灵魂。”",
+    tags:["油泼辣子","陕西八大怪","滋一声"]
+  },
+  {
+    category:"food", emoji:"🍢", title:"回坊烧烤", rating:5,
+    desc:"她印象最深的一顿。许多串只要一块钱，烤鸡中翼八块钱两只，老板很实在。菜单上青菜很少，没有南方常见的烤茄子和烤韭菜。",
+    highlight:"“人的记忆有时不按重要程度排列。”",
+    tags:["烧烤","回坊","一块钱一串","酸梅汤"]
+  },
+  {
+    category:"food", emoji:"🍗", title:"葫芦鸡", rating:4.5,
+    desc:"整只鸡处理好后捆出葫芦形状，再油炸、浇汁。她吃了两次，第二家做得更好，肉汁足，外皮也香。",
+    highlight:"“光看做法就知道它并不打算在清淡这件事上与人商量。”",
+    tags:["葫芦鸡","油炸","浇汁"]
+  },
+  {
+    category:"food", emoji:"🥗", title:"凉皮", rating:4,
+    desc:"三秦套餐成员。秦镇米皮、汉中面皮和擀面皮，口感与制作方式各有区别。",
+    highlight:"“一个名字之下，可以住着许多种日常生活。”",
+    tags:["凉皮","三秦套餐","秦镇米皮","擀面皮"]
+  },
+  {
+    category:"food", emoji:"🥙", title:"肉夹馍", rating:4,
+    desc:"白吉馍讲究外皮与内部层次，常用“铁圈虎背菊花心”形容。夹入腊汁肉后，肥瘦相间，热气与肉香一起冒出来。",
+    highlight:"“明明是把肉夹进馍里，偏偏把‘肉’放在前面。”",
+    tags:["肉夹馍","白吉馍","腊汁肉","三秦套餐"]
+  },
+  {
+    category:"food", emoji:"🥙", title:"腊牛肉夹馍", rating:4,
+    desc:"回坊的腊牛肉夹馍，肉更瘦一些，口感也更紧实。同样叫肉夹馍，换一个地方，味道就能变成另一个世界。",
+    highlight:"“一个名字之下，可以住着许多种日常生活。”",
+    tags:["腊牛肉夹馍","回坊"]
+  },
+  {
+    category:"food", emoji:"🥤", title:"冰峰汽水", rating:4,
+    desc:"凉皮、肉夹馍加一瓶冰峰汽水，是常见的“三秦套餐”。",
+    highlight:"“三秦套餐的灵魂之一。”",
+    tags:["冰峰","三秦套餐","汽水"]
+  },
+  {
+    category:"food", emoji:"🍜", title:"biangbiang面", rating:4,
+    desc:"果然宽得像裤带，两条面就能占满一只大碗。那个复杂的“biang”字，她至今不敢保证能凭记忆写出来。",
+    highlight:"“宽得像裤带。”",
+    tags:["biangbiang面","裤带面","宽面"]
+  },
+  {
+    category:"food", emoji:"🧃", title:"酸梅汤", rating:4,
+    desc:"回坊烧烤时点了一壶店家自己煮的酸梅汤，味道很好，让连续几顿重油重盐的胃有了一点安慰。",
+    highlight:"“胃的安慰。”",
+    tags:["酸梅汤","回坊","解腻"]
+  },
+  {
+    category:"food", emoji:"🥢", title:"擀面皮", rating:3.5,
+    desc:"比凉皮更有韧劲，是陕西面食宇宙里的另一种口感。",
+    highlight:"“同样叫凉皮，换一种做法就是另一种世界。”",
+    tags:["擀面皮","韧劲"]
+  },
+  {
+    category:"food", emoji:"🥙", title:"粉蒸肉夹馍", rating:3.5,
+    desc:"落地西安第一顿之一，和凉皮、肉夹馍、葫芦鸡一起出现。",
+    highlight:"“刚开始几顿，觉得味道浓，吃起来痛快。”",
+    tags:["粉蒸肉","夹馍","第一顿"]
+  },
+  {
+    category:"food", emoji:"🧄", title:"糖蒜", rating:3.5,
+    desc:"泡馍旁边配着糖蒜，解腻又提味。",
+    highlight:"“地方饮食已经形成了一套自己的语言。”",
+    tags:["糖蒜","泡馍搭档"]
+  },
+  {
+    category:"food", emoji:"🍅", title:"临潼久晶柿子 / 柿子饼", rating:3,
+    desc:"据说很有名，做成柿子饼也是当地特色之一。这趟没有赶上，算留了一点遗憾。",
+    highlight:"“留了一点遗憾。”",
+    tags:["临潼","柿子饼","没赶上"]
+  },
+  {
+    category:"food", emoji:"🥣", title:"鸡蛋醪糟", rating:2,
+    desc:"她尝试了，但不太合口味。",
+    highlight:"“习惯这件事，比想象得顽固得多。”",
+    tags:["鸡蛋醪糟","不太合口味"]
+  }
+];
+
+const grid = document.getElementById("cardGrid");
+const searchInput = document.getElementById("searchInput");
+const countEl = document.getElementById("count");
+let currentFilter = "all";
+
+function starsHTML(rating){
+  if(!rating) return "";
+  const full = Math.round(rating);
+  return `<div class="stars">${"★".repeat(full)}${"☆".repeat(5-full)}<span>${rating.toFixed(1)} / 5</span></div>`;
+}
+
+function cardHTML(item){
+  return `
+    <article class="card" data-category="${item.category}">
+      <div class="card-head">
+        <span class="emoji">${item.emoji}</span>
+        <div>
+          <span class="badge">${catName[item.category]}</span>
+          <h3>${item.title}</h3>
+        </div>
+      </div>
+      <p>${item.desc}</p>
+      ${item.highlight ? `<blockquote>${item.highlight}</blockquote>` : ""}
+      ${starsHTML(item.rating)}
+      <div class="chips">
+        ${item.tags.map(t => `<span>#${t}</span>`).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function render(){
+  const q = searchInput.value.trim().toLowerCase();
+  const list = items.filter(item => {
+    const matchFilter = currentFilter === "all" || item.category === currentFilter;
+    const haystack = (item.title + item.desc + item.tags.join(" ") + (item.highlight || "")).toLowerCase();
+    const matchSearch = !q || haystack.includes(q);
+    return matchFilter && matchSearch;
+  });
+  grid.innerHTML = list.map(cardHTML).join("");
+  countEl.textContent = list.length;
+}
+
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    render();
+  });
+});
+
+searchInput.addEventListener("input", render);
+
+// 美食热度榜
+const foodChart = document.getElementById("foodChart");
+const foodItems = items
+  .filter(item => item.category === "food" && item.rating)
+  .sort((a, b) => b.rating - a.rating);
+
+foodChart.innerHTML = foodItems.map(item => `
+  <div class="bar-row">
+    <div class="bar-label">${item.emoji} ${item.title}</div>
+    <div class="bar-track">
+      <div class="bar-fill" style="width:${(item.rating / 5) * 100}%"></div>
+    </div>
+    <div class="bar-val">${item.rating.toFixed(1)}</div>
+  </div>
+`).join("");
+
+render();
+</script>
+</body>
+</html>
